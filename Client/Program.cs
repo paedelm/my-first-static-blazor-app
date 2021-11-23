@@ -7,6 +7,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 const string localApiBase = "http://localhost:7071/";
 EnvironmentNS.Env.EnvName = builder.HostEnvironment.Environment;
+EnvironmentNS.Env.HostEnv = builder.HostEnvironment;
 Console.WriteLine($"environment={builder.HostEnvironment.Environment}");
 var baseAddress = builder.HostEnvironment.BaseAddress ?? localApiBase;
 if (baseAddress.ToLower().Contains("localhost"))
@@ -25,6 +26,8 @@ namespace EnvironmentNS
 {
     public class Env
     {
+        private static IWebAssemblyHostEnvironment? _hostenv;
+        public static IWebAssemblyHostEnvironment? HostEnv { get => _hostenv; set => _hostenv = value; }
         private static string _env = "Development";
         public static string EnvName { get => _env; set => _env = value; }
     }
