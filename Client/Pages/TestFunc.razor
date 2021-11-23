@@ -1,4 +1,4 @@
-﻿@page "/testfunc/{Naam}"
+﻿@page "/testfunc"
 @using BlazorApp.Shared
 @inject HttpClient Http
 
@@ -31,6 +31,7 @@ else
 @code {
     private NaamBericht? bericht;
     [Parameter]
+    [SupplyParameterFromQuery]
     public string? Naam { get; set; }
 
     protected override async Task OnInitializedAsync()

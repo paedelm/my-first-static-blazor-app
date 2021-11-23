@@ -1,9 +1,37 @@
 ﻿@page "/"
-
+@using EnvironmentNS
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Hai, Environment: @Env.EnvName</h1>
 
 Welcome to your new app.
 
+<TestFunc Naam="Peter Edelman"></TestFunc>
+<DynamicComponent Type="@typeof(TestFunc)" Parameters="@parameters"></DynamicComponent>
+
 <SurveyPrompt Title="How is Blazor working for you?" />
+<!--
+
+@foreach (var widget in widgets)
+{   
+    <DynamicComponent Type="@widget.Type" Parameters="@widget.Parameters"/>
+}
+-->
+
+@code {
+    Dictionary<string, object> parameters = new()  { ["naam"] = "Rutger" };
+    /*
+    private readonly List<Widget> widgets = new()
+    {
+        new Widget { Type = typeof(FetchData) },
+        new Widget
+        {
+            Type = typeof(Greeting), 
+            Parameters = new Dictionary<string, object>
+            {
+                ["Name"] = "Jon"
+            }
+        }
+    };
+    */
+}
