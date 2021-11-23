@@ -21,13 +21,14 @@ namespace BlazorApp.Api
             log.LogInformation("C# HTTP trigger function processed a request for function TestFunc.");
 
             string name = req.Query["name"];
+            var kenmerk = Environment.GetEnvironmentVariable("kenmerk") ?? string.Empty;
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             name = name ?? data?.name;
             var responseMessage = string.IsNullOrEmpty(name)
-                ? new NaamBericht(Naam: "Nobody", Bericht: "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
-                : new NaamBericht(Naam: name, Bericht: $"Hello, {name}. This HTTP triggered function executed successfully.");
+                ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
+                : new NaamBericht(Naam: name, Bericht: $"{kenmerk}:Hello, {name}. This HTTP triggered function executed successfully.");
 
             return new OkObjectResult(responseMessage);
         }
