@@ -2,7 +2,7 @@
 @using EnvironmentNS
 <PageTitle>Index</PageTitle>
 
-<h1>Hai, Environment: @Env.EnvName</h1>
+<h1>Hai, Environment: @Env.HostEnv?.Environment on @Env.HostEnv?.BaseAddress</h1>
 
 Welcome to your new app.
 
