@@ -1,8 +1,10 @@
 ﻿@page "/"
-@using EnvironmentNS
+// @using EnvironmentNS
+@using BlazorApp.Client.Services
+@inject MyEnvironment Env
 <PageTitle>Index</PageTitle>
 
-<h1>Hai, Environment: @Env.HostEnv?.Environment on @Env.HostEnv?.BaseAddress</h1>
+<h1>Haiiii----, Environment: @Env.HostEnvironment?.Environment on @Env.HostEnvironment?.BaseAddress</h1>
 
 Welcome to your new app.
 
