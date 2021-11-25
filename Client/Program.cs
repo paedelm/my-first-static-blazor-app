@@ -13,10 +13,10 @@ EnvironmentNS.Env.EnvName = builder.HostEnvironment.Environment;
 EnvironmentNS.Env.HostEnv = builder.HostEnvironment;
 Console.WriteLine($"environment={builder.HostEnvironment.Environment}");
 var baseAddress = builder.HostEnvironment.BaseAddress ?? localApiBase;
+builder.Services.AddAuthorizationCore();
 if (baseAddress.ToLower().Contains("localhost"))
 {
     builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(localApiBase) })
-    .AddAuthorizationCore()
     .AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
 
 }
