@@ -26,7 +26,7 @@ namespace BlazorApp.Client.AuthProviders
             };
             var anonymous = new ClaimsIdentity();
             var peter = new ClaimsIdentity(claims);
-            var x = await _httpClient.GetFromJsonAsync<AuthenticationState>("/.auth/me") ?? new AuthenticationState(new ClaimsPrincipal(peter));
+            var x = (await _httpClient.GetFromJsonAsync<AuthenticationState>("/.auth/me")) ?? new AuthenticationState(new ClaimsPrincipal(peter));
             return await Task.FromResult(x);
         }
     }
