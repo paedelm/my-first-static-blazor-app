@@ -4,7 +4,7 @@
 @inject MyEnvironment Env
 <PageTitle>Index</PageTitle>
 
-<h1>Haiiii----, Environment: @Env.HostEnvironment?.Environment on @Env.HostEnvironment?.BaseAddress</h1>
+<h1>Haiiii---- @situation, Environment: @Env.HostEnvironment?.Environment on @Env.HostEnvironment?.BaseAddress</h1>
 
 Welcome to your new app.
 
@@ -22,6 +22,7 @@ Welcome to your new app.
 
 @code {
     Dictionary<string, object> parameters = new()  { ["naam"] = "Rutger" };
+    private string situation = "Cloud";
     /*
     private readonly List<Widget> widgets = new()
     {
@@ -36,4 +37,7 @@ Welcome to your new app.
         }
     };
     */
+    protected override async Task OnInitializedAsync() {
+        situation = Env.HostEnvironment?.Environment == "Development" ? "Local" : "Cloud";
+    }
 }

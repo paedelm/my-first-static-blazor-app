@@ -1,4 +1,6 @@
 ﻿@page "/testfunc"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize()]
 @using BlazorApp.Shared
 @inject HttpClient Http
 

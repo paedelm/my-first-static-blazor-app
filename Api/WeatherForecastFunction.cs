@@ -46,7 +46,7 @@ namespace BlazorApp.Api
                 TemperatureC = temp = randomNumber.Next(-20, 55),
                 Summary = GetSummary(temp)
             }).ToArray();
-
+            foreach (var elem in result) log.LogInformation($"{elem.Date}, {elem.TemperatureC}, {elem.Summary}");
             return new OkObjectResult(result);
         }
     }
