@@ -13,18 +13,17 @@ EnvironmentNS.Env.EnvName = builder.HostEnvironment.Environment;
 EnvironmentNS.Env.HostEnv = builder.HostEnvironment;
 Console.WriteLine($"environment={builder.HostEnvironment.Environment}");
 var baseAddress = builder.HostEnvironment.BaseAddress ?? localApiBase;
-builder.Services.AddAuthorizationCore();
 if (baseAddress.ToLower().Contains("localhost"))
 {
-    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(localApiBase) })
-    .AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
-
+    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(localApiBase) });
 }
 else
 {
     builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
 }
-builder.Services.AddScoped(_ => new MyEnvironment(hostEnvironment: builder.HostEnvironment));
+builder.Services.AddScoped(_ => new MyEnvironment(hostEnvironment: builder.HostEnvironment))
+    .AddAuthorizationCore()
+    .AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
 // http://localhost:7071/api/WeatherForecast
 // swa start http://localhost:5000 --run "dotnet run --project Client/Client.csproj" --api-location Api
 await builder.Build().RunAsync();
