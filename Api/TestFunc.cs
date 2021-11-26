@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Linq;
+using System.Net;
 
 namespace BlazorApp.Api
 {
@@ -36,8 +37,17 @@ namespace BlazorApp.Api
             var responseMessage = string.IsNullOrEmpty(name)
                 ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk} principal:{identName}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
                 : new NaamBericht(Naam: name, Bericht: $"{kenmerk} principal: {identName}:Hello, {name}. This HTTP triggered function executed successfully.");
-
-            return new OkObjectResult(responseMessage);
+            if (identName != "anonymous" || kenmerk.StartsWith("DEVL"))
+            {
+                return new OkObjectResult(responseMessage);
+            }
+            else
+            {
+                return new ObjectResult("Error 403 Forbidden")
+                {
+                    StatusCode = (int?)HttpStatusCode.Forbidden
+                };
+            }
         }
     }
     public static class StaticWebAppsAuth

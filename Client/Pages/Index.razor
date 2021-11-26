@@ -7,21 +7,23 @@
 <h1>Haiiii---- @situation, Environment: @Env.HostEnvironment?.Environment on @Env.HostEnvironment?.BaseAddress</h1>
 
 Welcome to your new app.
-
-<TestFunc Naam="Peter Edelman"></TestFunc>
-<DynamicComponent Type="@typeof(TestFunc)" Parameters="@parameters"></DynamicComponent>
+<AuthorizeView>
+    <Authorized>
+        <TestFunc Naam="Peter Edelman"></TestFunc>
+        <DynamicComponent Type="@typeof(TestFunc)" Parameters="@parameters"></DynamicComponent>
+    </Authorized>
+</AuthorizeView>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 <!--
 
 @foreach (var widget in widgets)
-{   
+{
     <DynamicComponent Type="@widget.Type" Parameters="@widget.Parameters"/>
 }
 -->
-
 @code {
-    Dictionary<string, object> parameters = new()  { ["naam"] = "Rutger" };
+    Dictionary<string, object> parameters = new() { ["naam"] = "Rutger" };
     private string situation = "Cloud";
     /*
     private readonly List<Widget> widgets = new()
@@ -29,7 +31,7 @@ Welcome to your new app.
         new Widget { Type = typeof(FetchData) },
         new Widget
         {
-            Type = typeof(Greeting), 
+            Type = typeof(Greeting),
             Parameters = new Dictionary<string, object>
             {
                 ["Name"] = "Jon"
@@ -37,7 +39,8 @@ Welcome to your new app.
         }
     };
     */
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
         situation = Env.HostEnvironment?.Environment == "Development" ? "Local" : "Cloud";
     }
 }
