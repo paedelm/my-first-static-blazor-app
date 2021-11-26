@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EnvironmentNS;
 namespace BlazorApp.Client.AuthProviders
 {
     public class TestAuthStateProvider : AuthenticationStateProvider
@@ -17,17 +18,45 @@ namespace BlazorApp.Client.AuthProviders
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             //await Task.Delay(1500);
-            var claims = new List<Claim>
+            List<Claim> claims = ClaimList("Peter");
+            var anonymous = new ClaimsIdentity();
+            var peter = new ClaimsIdentity(claims, "TestAuthType");
+            if (Env.EnvName == "Development")
             {
-                new Claim(ClaimTypes.Name, "Peter"),
+                return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(peter)));
+            }
+            else
+            {
+                var clientPrincipal = (await _httpClient.GetFromJsonAsync<ClientPrincipal>("/.auth/me"));
+                if (clientPrincipal != null)
+                {
+
+                    var ident = new ClaimsIdentity(ClaimList(clientPrincipal.UserDetails), clientPrincipal.IdentityProvider);
+                    return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(ident)));
+                } else
+                {
+                    return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(anonymous)));
+                }
+            }
+        }
+
+        private static List<Claim> ClaimList(string name)
+        {
+            return new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, name),
                 new Claim(ClaimTypes.Role, "lezer"),
                 new Claim(ClaimTypes.Role, "anonymous"),
                 new Claim(ClaimTypes.Role, "authenticated"),
             };
-            var anonymous = new ClaimsIdentity();
-            var peter = new ClaimsIdentity(claims, "TestAuthType");
-            // var x = (await _httpClient.GetFromJsonAsync<AuthenticationState>("/.auth/me")) ?? new AuthenticationState(new ClaimsPrincipal(peter));
-            return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(peter)));
         }
+    }
+    class ClientPrincipal
+    {
+        public string? IdentityProvider { get; set; }
+        public string? UserId { get; set; }
+        public string? UserDetails { get; set; }
+        public string[]? UserRoles { get; set; }
+
     }
 }
