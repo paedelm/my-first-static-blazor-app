@@ -25,7 +25,7 @@ namespace BlazorApp.Api
         {
             log.LogInformation("C# HTTP trigger function processed a request for function TestFunc.");
             var principal = StaticWebAppsAuth.Parse(req);
-            log.LogInformation($"principal: {principal.Identity}");
+            log.LogInformation($"principal: {principal.Identity.Name}");
             string name = req.Query["name"];
             var kenmerk = Environment.GetEnvironmentVariable("kenmerk") ?? string.Empty;
 
@@ -33,8 +33,8 @@ namespace BlazorApp.Api
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             name = name ?? data?.name;
             var responseMessage = string.IsNullOrEmpty(name)
-                ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk} principal:{principal.Identity}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
-                : new NaamBericht(Naam: name, Bericht: $"{kenmerk} principal: {principal.Identity}:Hello, {name}. This HTTP triggered function executed successfully.");
+                ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk} principal:{principal.Identity.Name}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
+                : new NaamBericht(Naam: name, Bericht: $"{kenmerk} principal: {principal.Identity.Name}:Hello, {name}. This HTTP triggered function executed successfully.");
 
             return new OkObjectResult(responseMessage);
         }
