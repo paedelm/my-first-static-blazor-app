@@ -36,7 +36,7 @@ namespace BlazorApp.Client.AuthProviders
             else
             {
                 var rec = (await _httpClient.GetFromJsonAsync<PrincipalRec>("/.auth/me"));
-                if (rec != null)
+                if (rec?.clientPrincipal != null)
                 {
 
                     var ident = new ClaimsIdentity(ClaimList(rec.clientPrincipal?.userDetails ?? "Peter Def"), rec.clientPrincipal?.identityProvider ?? "GithubDef");
