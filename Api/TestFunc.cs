@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using BlazorApp.Shared;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using System.Linq;
 
 namespace BlazorApp.Api
 {
@@ -15,11 +20,12 @@ namespace BlazorApp.Api
     {
         [FunctionName("TestFunc")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.User, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request for function TestFunc.");
-
+            var principal = StaticWebAppsAuth.Parse(req);
+            log.LogInformation($"principal: {principal.Identity}");
             string name = req.Query["name"];
             var kenmerk = Environment.GetEnvironmentVariable("kenmerk") ?? string.Empty;
 
@@ -27,10 +33,47 @@ namespace BlazorApp.Api
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             name = name ?? data?.name;
             var responseMessage = string.IsNullOrEmpty(name)
-                ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
-                : new NaamBericht(Naam: name, Bericht: $"{kenmerk}:Hello, {name}. This HTTP triggered function executed successfully.");
+                ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk} principal:{principal.Identity}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
+                : new NaamBericht(Naam: name, Bericht: $"{kenmerk} principal: {principal.Identity}:Hello, {name}. This HTTP triggered function executed successfully.");
 
             return new OkObjectResult(responseMessage);
+        }
+    }
+    public static class StaticWebAppsAuth
+    {
+        private class ClientPrincipal
+        {
+            public string IdentityProvider { get; set; }
+            public string UserId { get; set; }
+            public string UserDetails { get; set; }
+            public IEnumerable<string> UserRoles { get; set; }
+        }
+
+        public static ClaimsPrincipal Parse(HttpRequest req)
+        {
+            var principal = new ClientPrincipal();
+
+            if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
+            {
+                var data = header[0];
+                var decoded = Convert.FromBase64String(data);
+                var json = Encoding.UTF8.GetString(decoded);
+                principal = System.Text.Json.JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            principal.UserRoles = principal.UserRoles?.Except(new string[] { "anonymous" }, StringComparer.CurrentCultureIgnoreCase);
+
+            if (!principal.UserRoles?.Any() ?? true)
+            {
+                return new ClaimsPrincipal();
+            }
+
+            var identity = new ClaimsIdentity(principal.IdentityProvider);
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal.UserId));
+            identity.AddClaim(new Claim(ClaimTypes.Name, principal.UserDetails));
+            identity.AddClaims(principal.UserRoles.Select(r => new Claim(ClaimTypes.Role, r)));
+
+            return new ClaimsPrincipal(identity);
         }
     }
 }
