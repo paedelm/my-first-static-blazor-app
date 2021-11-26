@@ -6,14 +6,19 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EnvironmentNS;
+using BlazorApp.Client.Services;
+
 namespace BlazorApp.Client.AuthProviders
 {
     public class TestAuthStateProvider : AuthenticationStateProvider
     {
         private HttpClient _httpClient;
-        public TestAuthStateProvider(HttpClient httpClient)
+        private readonly MyEnvironment myEnvironment;
+
+        public TestAuthStateProvider(HttpClient httpClient, MyEnvironment myEnvironment)
         {
             _httpClient = httpClient;
+            this.myEnvironment=myEnvironment;
         }
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
@@ -23,17 +28,21 @@ namespace BlazorApp.Client.AuthProviders
             var peter = new ClaimsIdentity(claims, "TestAuthType");
             if (Env.EnvName == "Development")
             {
+                var http = new HttpClient { BaseAddress = new Uri(myEnvironment.HostEnvironment.BaseAddress) };
+                var rec = (await http.GetFromJsonAsync<PrincipalRec>("/me.json"));
+                Console.WriteLine($"clientprincipal = {rec?.clientPrincipal?.identityProvider}, {rec?.clientPrincipal?.userDetails}");
                 return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(peter)));
             }
             else
             {
-                var clientPrincipal = (await _httpClient.GetFromJsonAsync<ClientPrincipal>("/.auth/me"));
-                if (clientPrincipal != null)
+                var rec = (await _httpClient.GetFromJsonAsync<PrincipalRec>("/.auth/me"));
+                if (rec != null)
                 {
 
-                    var ident = new ClaimsIdentity(ClaimList(clientPrincipal.UserDetails), clientPrincipal.IdentityProvider);
+                    var ident = new ClaimsIdentity(ClaimList(rec.clientPrincipal?.userDetails ?? "Peter Def"), rec.clientPrincipal?.identityProvider ?? "GithubDef");
                     return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(ident)));
-                } else
+                }
+                else
                 {
                     return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(anonymous)));
                 }
@@ -53,10 +62,11 @@ namespace BlazorApp.Client.AuthProviders
     }
     class ClientPrincipal
     {
-        public string? IdentityProvider { get; set; }
-        public string? UserId { get; set; }
-        public string? UserDetails { get; set; }
-        public string[]? UserRoles { get; set; }
+        public string? identityProvider { get; set; }
+        public string? userId { get; set; }
+        public string? userDetails { get; set; }
+        public string[]? userRoles { get; set; }
 
     }
+    record PrincipalRec(ClientPrincipal clientPrincipal);
 }
