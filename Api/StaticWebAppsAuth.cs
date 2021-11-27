@@ -24,7 +24,7 @@ namespace BlazorApp.Api
         public static ClaimsPrincipal Parse(HttpRequest req)
         {
             bool hasPrincipalHeader = req.Headers.TryGetValue("x-ms-client-principal", out var header);
-            if (hasPrincipalHeader) return new ClaimsPrincipal();
+            if (!hasPrincipalHeader) return new ClaimsPrincipal();
             Func<ClientPrincipal> fromHeader = () =>
             {
                 var data = header[0];
