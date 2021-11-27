@@ -8,22 +8,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using BlazorApp.Shared;
-using System.Net;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+//using System.Net;
+//using Microsoft.AspNetCore.Authorization;
+//using System.Security.Claims;
 
 namespace BlazorApp.Api
 {
     public static class TestFunc
     {
-        [Authorize]
         [FunctionName("TestFunc")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ClaimsPrincipal principal,
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request for function TestFunc.");
-            //var principal = StaticWebAppsAuth.Parse(req);
+            var principal = StaticWebAppsAuth.Parse(req);
             var identName = principal.Identity == null ? "anonymous" : principal.Identity.Name;
             log.LogInformation($"principal: {identName}");
             string name = req.Query["name"];
