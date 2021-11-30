@@ -26,21 +26,22 @@ Welcome to your new app.
     Dictionary<string, object> parameters = new() { ["naam"] = "Rutger" };
     private string situation = "Cloud";
     /*
-    private readonly List<Widget> widgets = new()
-    {
-        new Widget { Type = typeof(FetchData) },
-        new Widget
+        private readonly List<Widget> widgets = new()
         {
+            new Widget { Type = typeof(FetchData) },
+            new Widget
+            {
             Type = typeof(Greeting),
             Parameters = new Dictionary<string, object>
             {
-                ["Name"] = "Jon"
-            }
-        }
+        ["Name"] = "Jon"
+    }
+    }
     };
     */
     protected override async Task OnInitializedAsync()
     {
         situation = Env.HostEnvironment?.Environment == "Development" ? "Local" : "Cloud";
+        await Task.Delay(0);
     }
 }

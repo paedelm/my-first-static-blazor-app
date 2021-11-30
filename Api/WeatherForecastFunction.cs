@@ -37,6 +37,9 @@ namespace BlazorApp.Api
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
+            var principal = StaticWebAppsAuth.Parse(req);
+            if (principal.Identity == null) return StaticWebAppsAuth.Forbidden(errorMessage: "Fout 403: Niet Toegestaan");
+
             var randomNumber = new Random();
             var temp = 0;
 

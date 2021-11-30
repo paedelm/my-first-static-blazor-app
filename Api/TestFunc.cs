@@ -23,7 +23,10 @@ namespace BlazorApp.Api
         {
             log.LogInformation("C# HTTP trigger function processed a request for function TestFunc.");
             var principal = StaticWebAppsAuth.Parse(req);
-            var identName = principal.Identity == null ? "anonymous" : principal.Identity.Name;
+            if (principal.Identity == null) return StaticWebAppsAuth.Forbidden(errorMessage: "Fout 403: Niet Toegestaan");
+
+            // var identName = principal.Identity == null ? "anonymous" : principal.Identity.Name;
+            var identName = principal.Identity.Name;
             log.LogInformation($"principal: {identName}");
             string name = req.Query["name"];
             var kenmerk = Environment.GetEnvironmentVariable("kenmerk") ?? string.Empty;
@@ -34,18 +37,7 @@ namespace BlazorApp.Api
             var responseMessage = string.IsNullOrEmpty(name)
                 ? new NaamBericht(Naam: "Nobody", Bericht: $"{kenmerk} principal:{identName}:This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.")
                 : new NaamBericht(Naam: name, Bericht: $"{kenmerk} principal: {identName}:Hello, {name}. This HTTP triggered function executed successfully.");
-            if (principal.Identity != null || kenmerk.StartsWith("DEVL"))
-            {
-                return new OkObjectResult(responseMessage);
-            }
-            else
-            {
-                return StaticWebAppsAuth.Forbidden(errorMessage: "Fout 403: Niet Toegestaan");
-                //return new ObjectResult("Error 403 Forbidden")
-                //{
-                //    StatusCode = (int?)HttpStatusCode.Forbidden
-                //};
-            }
+            return new OkObjectResult(responseMessage);
         }
     }
 }

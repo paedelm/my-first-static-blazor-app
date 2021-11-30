@@ -25,17 +25,8 @@ namespace BlazorApp.Client.AuthProviders
             //await Task.Delay(1500);
             List<Claim> claims = ClaimList("Peter");
             var anonymous = new ClaimsIdentity();
-            var peter = new ClaimsIdentity(claims, "TestAuthType");
-            if (Env.EnvName == "Development")
+            Func<PrincipalRec?, Task<AuthenticationState>> genState = async (PrincipalRec? rec) =>
             {
-                var http = new HttpClient { BaseAddress = new Uri(myEnvironment.HostEnvironment.BaseAddress) };
-                var rec = (await http.GetFromJsonAsync<PrincipalRec>("/me.json"));
-                Console.WriteLine($"clientprincipal = {rec?.clientPrincipal?.identityProvider}, {rec?.clientPrincipal?.userDetails}");
-                return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(peter)));
-            }
-            else
-            {
-                var rec = (await _httpClient.GetFromJsonAsync<PrincipalRec>("/.auth/me"));
                 if (rec?.clientPrincipal != null)
                 {
 
@@ -46,6 +37,21 @@ namespace BlazorApp.Client.AuthProviders
                 {
                     return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(anonymous)));
                 }
+
+            };
+            var peter = new ClaimsIdentity(claims, "TestAuthType");
+            if (Env.EnvName == "Development")
+            {
+                var http = new HttpClient { BaseAddress = new Uri(myEnvironment.HostEnvironment.BaseAddress) };
+                var rec = (await http.GetFromJsonAsync<PrincipalRec>("/me.json"));
+                Console.WriteLine($"-- clientprincipal = {rec?.clientPrincipal?.identityProvider}, {rec?.clientPrincipal?.userDetails}");
+                //return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(peter)));
+                return await genState(rec);
+            }
+            else
+            {
+                var rec = (await _httpClient.GetFromJsonAsync<PrincipalRec>("/.auth/me"));
+                return await genState(rec);
             }
         }
 
