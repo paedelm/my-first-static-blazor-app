@@ -5,10 +5,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace graphQL;
 
-public static class GraphQLFunction
+public class GraphQLFunction
 {
     [FunctionName("GraphQL")]
-    public static Task<IActionResult> Run(
+    public Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] // Route = "graphql/{**slug}")] 
         HttpRequest request,
         [GraphQL] 
