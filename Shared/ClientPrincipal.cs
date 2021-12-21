@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 namespace BlazorApp.Shared
+#nullable enable
 {
     public class ClientPrincipal
     {

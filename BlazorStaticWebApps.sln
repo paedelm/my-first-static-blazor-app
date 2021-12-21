@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{491BFBAF-7032-4ED7-BF3A-33595531E18A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graphQL", "graphQL\graphQL.csproj", "{B63AED06-3288-47E9-BEFD-C5993C652CB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{491BFBAF-7032-4ED7-BF3A-33595531E18A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{491BFBAF-7032-4ED7-BF3A-33595531E18A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{491BFBAF-7032-4ED7-BF3A-33595531E18A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B63AED06-3288-47E9-BEFD-C5993C652CB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B63AED06-3288-47E9-BEFD-C5993C652CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B63AED06-3288-47E9-BEFD-C5993C652CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B63AED06-3288-47E9-BEFD-C5993C652CB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

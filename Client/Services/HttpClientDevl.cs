@@ -4,19 +4,22 @@ using System.Text;
 using System.Text.Json;
 using BlazorApp.Shared;
 using EnvironmentNS;
-
+using BlazorApp.Client.AuthProviders;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BlazorApp.Client.Services
 {
     public class HttpClientDevl
     {
-        public HttpClientDevl(HttpClient http)
+        public HttpClientDevl(HttpClient http, AuthenticationStateProvider authProvider)
         {
             Http = http;
+            AuthProvider = authProvider;
         }
 
-        private static readonly ClientPrincipal paedelm = new() { IdentityProvider = "github", UserId = "33", UserDetails = "paedelm", UserRoles = new string[] { "authenticated" } };
+        //private static readonly ClientPrincipal paedelm = new() { IdentityProvider = "github", UserId = "33", UserDetails = "paedelm", UserRoles = new string[] { "authenticated" } };
         private HttpClient Http { get; }
+        private AuthenticationStateProvider AuthProvider { get; }
         public async Task<T?> GetFromJsonAsync<T>(string apicall)
         {
             Func<ClientPrincipal, string> ToHeader = (ClientPrincipal clientPrincipal) =>
@@ -36,7 +39,8 @@ namespace BlazorApp.Client.Services
             // add custom http header
             if (Env.EnvName ==  "Development")
             {
-                request.Headers.Add("x-ms-client-principal", ToHeader(paedelm));
+                var authProvider = AuthProvider as TestAuthStateProvider;
+                if (authProvider != null) request.Headers.Add("x-ms-client-principal", ToHeader(authProvider.ClientPrincipal));
             }
 
             // send request

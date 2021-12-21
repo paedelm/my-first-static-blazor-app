@@ -22,7 +22,8 @@ builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(apiBas
 builder.Services.AddScoped(_ => new MyEnvironment(hostEnvironment: builder.HostEnvironment))
     .AddScoped<HttpClientDevl>()
     .AddAuthorizationCore()
-    .AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
+    .AddScoped<AuthenticationStateProvider, TestAuthStateProvider>()
+    .AddScoped<HttpClientDevl>();
 // http://localhost:7071/api/WeatherForecast
 // swa start http://localhost:5000 --run "dotnet run --project Client/Client.csproj" --api-location Api
 await builder.Build().RunAsync();

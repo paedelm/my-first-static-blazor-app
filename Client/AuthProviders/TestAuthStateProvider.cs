@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using EnvironmentNS;
 using BlazorApp.Client.Services;
+using BlazorApp.Shared;
 
 namespace BlazorApp.Client.AuthProviders
 {
@@ -14,6 +15,7 @@ namespace BlazorApp.Client.AuthProviders
     {
         private HttpClient _httpClient;
         private readonly MyEnvironment myEnvironment;
+        public ClientPrincipal ClientPrincipal { get; set; } = new ClientPrincipal();
 
         public TestAuthStateProvider(HttpClient httpClient, MyEnvironment myEnvironment)
         {
@@ -30,7 +32,7 @@ namespace BlazorApp.Client.AuthProviders
                 if (rec?.clientPrincipal != null)
                 {
 
-                    var ident = new ClaimsIdentity(ClaimList(rec.clientPrincipal?.userDetails ?? "Peter Def"), rec.clientPrincipal?.identityProvider ?? "GithubDef");
+                    var ident = new ClaimsIdentity(ClaimList(rec.clientPrincipal?.UserDetails ?? "Peter Def"), rec.clientPrincipal?.IdentityProvider ?? "GithubDef");
                     return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(ident)));
                 }
                 else
@@ -42,17 +44,20 @@ namespace BlazorApp.Client.AuthProviders
             var peter = new ClaimsIdentity(claims, "TestAuthType");
             if (Env.EnvName == "Development")
             {
-                var http = new HttpClient { BaseAddress = new Uri(myEnvironment.HostEnvironment.BaseAddress) };
-                var rec = (await http.GetFromJsonAsync<PrincipalRec>("/me.json"));
-                Console.WriteLine($"-- clientprincipal = {rec?.clientPrincipal?.identityProvider}, {rec?.clientPrincipal?.userDetails}");
+                //var http = new HttpClient { BaseAddress = new Uri(myEnvironment.HostEnvironment.BaseAddress) };
+                var rec = (await _httpClient.GetFromJsonAsync<PrincipalRec>($"{myEnvironment.HostEnvironment.BaseAddress}me.json"));
+                Console.WriteLine($"-- clientprincipal = {rec?.clientPrincipal?.IdentityProvider}, {rec?.clientPrincipal?.UserDetails}");
                 //return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(peter)));
+                ClientPrincipal = rec?.clientPrincipal ?? new ClientPrincipal();
                 return await genState(rec);
             }
             else
             {
                 var rec = (await _httpClient.GetFromJsonAsync<PrincipalRec>("/.auth/me"));
+                ClientPrincipal = rec?.clientPrincipal ?? new ClientPrincipal(); ;
                 return await genState(rec);
             }
+
         }
 
         private static List<Claim> ClaimList(string name)
@@ -66,13 +71,13 @@ namespace BlazorApp.Client.AuthProviders
             };
         }
     }
-    class ClientPrincipal
-    {
-        public string? identityProvider { get; set; }
-        public string? userId { get; set; }
-        public string? userDetails { get; set; }
-        public string[]? userRoles { get; set; }
+    //public class ClientPrincipal
+    //{
+    //    public string? identityProvider { get; set; }
+    //    public string? userId { get; set; }
+    //    public string? userDetails { get; set; }
+    //    public string[]? userRoles { get; set; }
 
-    }
+    //}
     record PrincipalRec(ClientPrincipal clientPrincipal);
 }
