@@ -7,7 +7,7 @@ namespace graphQL;
 
 public class GraphQLFunction
 {
-    [FunctionName("GraphQLHttpFunction")]
+    [FunctionName("graphql")]
     public Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "graphql/{**slug}")] 
         HttpRequest request,
