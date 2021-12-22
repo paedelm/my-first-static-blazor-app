@@ -71,7 +71,9 @@ namespace BlazorApp.Api
                 table.UpdateEntity(entity, z.Value.ETag, TableUpdateMode.Replace);
             }
             await principalsOut.AddAsync(principal);
- //           await Task.Delay(0);
+            log.Log(LogLevel.Information, $"*info*:principal={principal.UserDetails}");
+            log.Log(LogLevel.Error, $"*error*: principal={principal.UserDetails}");
+            //           await Task.Delay(0);
             return new OkObjectResult(principal);
         }
     }
