@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using BlazorApp.Shared;
 
 namespace graphQL;
 
 public class GraphQLFunction
 {
     [FunctionName("GraphQLHttpFunction")]
-    public Task<IActionResult> Run(
+    public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "graphql/{**slug}")]
         HttpRequest request,
         ILogger log,
@@ -17,6 +18,7 @@ public class GraphQLFunction
         IGraphQLRequestExecutor executor)
     {
         log.Log(LogLevel.Error, $"request={request.Body}");
-        return executor.ExecuteAsync(request);
+        return new OkObjectResult(new NaamBericht(Naam: "GraphQL", Bericht: "Zou dit dan wel werken?"));
+        //return await executor.ExecuteAsync(request);
     }
 }
