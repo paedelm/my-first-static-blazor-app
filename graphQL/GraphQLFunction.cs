@@ -10,7 +10,7 @@ namespace graphQL;
 public class GraphQLFunction
 {
     [FunctionName("GraphQLHttpFunction")]
-    public async Task<IActionResult> Run(
+    public Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "graphql/{**slug}")]
         HttpRequest request,
         ILogger log,
@@ -19,6 +19,6 @@ public class GraphQLFunction
     {
         log.Log(LogLevel.Error, $"request={request.Body}");
         //return new OkObjectResult(new NaamBericht(Naam: "GraphQL", Bericht: "Zou dit dan wel werken?"));
-        return await executor.ExecuteAsync(request);
+        return executor.ExecuteAsync(request);
     }
 }
