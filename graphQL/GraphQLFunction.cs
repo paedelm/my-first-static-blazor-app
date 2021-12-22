@@ -18,7 +18,7 @@ public class GraphQLFunction
         IGraphQLRequestExecutor executor)
     {
         log.Log(LogLevel.Error, $"request={request.Body}");
-        return new OkObjectResult(new NaamBericht(Naam: "GraphQL", Bericht: "Zou dit dan wel werken?"));
-        //return await executor.ExecuteAsync(request);
+        //return new OkObjectResult(new NaamBericht(Naam: "GraphQL", Bericht: "Zou dit dan wel werken?"));
+        return await executor.ExecuteAsync(request);
     }
 }
