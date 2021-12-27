@@ -5,8 +5,8 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "37b14efc-b770-41f7-a2e6-7a903c658f27",
     "kenmerk": "DEVL-waarde",
-    "CosmosDbConnection": "AccountEndpoint=https://peters-databases.documents.azure.com:443/;AccountKey=HfWJ4O8bCWzboeP7biWD10m7zDM0SPzVQ5x80TzXVVBoWj5OQvaom6DTAVZs8trQamr3wtRIjOHiNFmWtraorg==;",
-    "TableConnection": "https://staticwebpaedelm.table.core.windows.net/ClientPrincipal?sv=2020-08-04&ss=t&srt=o&sp=rwdlacu&se=2022-02-03T05:33:02Z&st=2021-12-02T21:33:02Z&spr=https&sig=yaZfAcz8jgoXWFPa8JWWxM9KoZ7ind%2BUNPmuQDvWtTs%3D"
+    "CosmosDbConnection": "",
+    "TableConnection": ""
   },
 
   "Host": {
