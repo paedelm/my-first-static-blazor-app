@@ -1,0 +1,62 @@
+﻿@page "/displayuser"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize()]
+@using BlazorApp.Shared
+@using BlazorApp.Client.Services
+@using EnvironmentNS
+@using System.Text.Json
+@using System.Text
+@using BlazorApp.Client.AuthProviders
+@inject AuthenticationStateProvider StateProvider
+@inject HttpClient Http
+<AuthorizeView><Authorized>
+<h1>DisplayUser @context?.User?.Identity?.Name</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (principal == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>UserId</th>
+                <th>Provider</th>
+                <th>Usernaam</th>
+                <th>Roles</th> 
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@principal?.UserId</td>
+                <td>@principal?.IdentityProvider</td>
+                <td>@principal?.UserDetails</td>
+                <td>@principal?.UserRoles?.Aggregate("Roles :", (acc, next) => $"{acc} {next} ") </td>
+            </tr>
+        </tbody>
+    </table>
+}
+</Authorized></AuthorizeView>
+@code {
+    private ClientPrincipal? principal;
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Naam { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            TestAuthStateProvider? testAuthProvider = StateProvider as TestAuthStateProvider;
+            var apicall = "/api/storeuser";
+            var response = await Http.PostAsJsonAsync(apicall, testAuthProvider?.ClientPrincipal); // ?? new ClientPrincipal();
+            principal = await response.Content.ReadFromJsonAsync<ClientPrincipal>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "clientPrincipal": {
+    "identityProvider": "github",
+    "userId": "25bff8d70d6f45c788effd29e5e3b819",
+    "userDetails": "paedelm",
+    "userRoles": [
+      "lezer",
+      "anonymous",
+      "authenticated"
+    ]
+  }
+}
